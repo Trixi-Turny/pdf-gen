@@ -1,0 +1,14 @@
+{
+  "name": "pdf-gen",
+  "version": "1.0.0",
+  "description": "Sample pdf generator",
+  "main": "app.js",
+  "scripts": {
+    "test": "npm test"
+  },
+  "author": "Trixi Turny",
+  "license": "ISC",
+  "dependencies": {
+    "pdf-invoice": "^1.0.2"
+  }
+}
