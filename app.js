@@ -1,10 +1,11 @@
 const pdfInvoice = require('pdf-invoice');
 const document = pdfInvoice({
     company: {
+    
       phone: '(99) 9 9999-9999',
       email: 'company@weswap.com',
       address: 'Av. Companhia, 182, Água Branca, Piauí',
-      name: 'WeSwap',
+      logo: 'assets/Png_logo_Large.png',
     },
     customer: {
       name: 'Elliot Raque',
