@@ -9,7 +9,12 @@ const document = pdfInvoice({
     },
     customer: {
       name: 'Elliot Raque',
-      email: 'raque@gmail.com',
+      address:{
+        addressLine1: '1 Street rd',
+        addressLine2: 'Westminster',
+        addressLine3: 'Town',
+        postCode: 'SY45 7UJ'
+      }
     },
     items: [
       {date:'2018-03-02', description: 'Lorem ipsum dollor sit ametLorem ipsum dollor sit amet', local_amount: 10, fx_rate: 34.5,  amount: 15 },
