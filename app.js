@@ -13,7 +13,8 @@ const document = pdfInvoice({
         addressLine1: '1 Street rd',
         addressLine2: 'Westminster',
         addressLine3: 'Town',
-        postCode: 'SY45 7UJ'
+        postCode: 'SY45 7UJ',
+        country: 'UK'
       }
     },
     items: [
