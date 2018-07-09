@@ -7,6 +7,10 @@ const document = pdfInvoice({
       address: 'Av. Companhia, 182, Água Branca, Piauí',
       logo: 'assets/Png_logo_Large.png',
     },
+    dateRange:{
+      dateFrom: '2018-08-01',
+      dateTo: '2018-08-31'
+    },
     customer: {
       name: 'Elliot Raque',
       address:{
@@ -45,10 +49,10 @@ const document = pdfInvoice({
       {date:'2018-03-02', description: 'Lorem ipsum dollor sit ametLorem ipsum dollor sit amet', local_amount: 10, fx_rate: 34.5,  amount: 15 },
       {date:'2018-03-02', description: 'Lorem ipsum dollor sit amet', local_amount: 100, fx_rate: 34.5,  amount: 100 },
       {date:'2018-03-02', description: 'Lorem ipsum dollor sit amet', local_amount: 1873, fx_rate: 34.5,  amount: 1550 },
-      {date:'2018-03-02', description: 'Lorem ipsum dollor sit ametLorem ipsum dollor sit amet', local_amount: 10, fx_rate: 34.5,  amount: 15 },
+      {date:'2018-03-02', description: 'Lorem ipsum dollor sit ametLorem ipsum dollor sit amet Lorem ipsum dollor sit ametLorem ipsum dollor sit amet Lorem ipsum dollor sit ametLorem ipsum dollor sit amet', local_amount: 10, fx_rate: 34.5,  amount: 15 },
       {date:'2018-03-02', description: 'Lorem ipsum dollor sit amet', local_amount: 100, fx_rate: 34.5,  amount: 100 },
       {date:'2018-03-02', description: 'Lorem ipsum dollor sit amet', local_amount: 1873, fx_rate: 34.5,  amount: 1550 },
-      
+
     ],
   });
  
