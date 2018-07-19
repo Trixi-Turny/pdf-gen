@@ -70,9 +70,7 @@ function PDFInvoice(_ref){
           }
       
           function genFooter() {
-              doc.fillColor('#cccccc');
-              doc.font('WeSwap-light').fontSize(7).text(FOOTER, CONTENT_LEFT_PADDING, 740);
-              doc.fillColor('#333333');
+              doc.font('WeSwap-light').fontSize(7).text(FOOTER, CONTENT_LEFT_PADDING, 740).fillColor('#000000');
               console.log('footer is done');
           }
       
