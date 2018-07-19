@@ -54,9 +54,8 @@ function PDFInvoice(_ref){
                   .lineWidth(1.2)
                   .strokeColor(YELLOW_LINE_COLOUR)
                   .stroke();
+
               //Top -left text with 'Statement and date
-      
-      
               doc.font('WeSwap-semibold').fontSize(18).text('Statement', CONTENT_LEFT_PADDING, 30, {
                   align: 'right',
               }).fillColor(TEXT_COLOUR);
@@ -75,7 +74,7 @@ function PDFInvoice(_ref){
           function genFooter() {
               doc.font('WeSwap-light').fontSize(6.6).text(FOOTER, CONTENT_LEFT_PADDING, 740, {
                   width: FOOTER_WIDTH
-              }).fillColor('#262626');
+              }).fillColor(TEXT_COLOUR);
               console.log('footer is done');
           }
       
@@ -119,18 +118,32 @@ function PDFInvoice(_ref){
       
           function generateTableForPage(chunk) {
               var lineHeight = 310;
+              var offset1 = 35;
+              var offset2 =20;
+              var wrap = 600;
+              var twoLineDescription = '';
               chunk.forEach(function (item, itemIndex) {
                   ['date', 'description', 'local_amount', 'fx_rate', 'amount'].forEach(function (field, i) {
       
                       //description to go on 2 lines at 
-                      if (item[field] && item[field].length > 35) {
-                          item[field] = item[field].substring(0, 35) + '\n' + item[field].substring(35, 70);
+                      if (item.description && item.description.length > 35) {
+                          item.description = item.description.substring(0, 69);
+                          wrap = 210;
+                          
+        
+                        //   lineHeight+=4
+                        //   offset2+=20;
+
                       }
-      
-                      doc.font('WeSwap-light').fontSize(TEXT_SIZE).text(item[field], table.x + table.inc[i], table.y + 20 + + itemIndex * 35, {
-                        width: 600
+                    //   else{
+                      console.log(itemIndex+ " index");
+                      doc.font('WeSwap-light').fontSize(TEXT_SIZE).text(item[field], table.x + table.inc[i], table.y + offset2 + itemIndex * offset1, {
+                        width: wrap,
+                        lineBreak: -5
+                        
 
                       });
+                    // }
       
                   });
                   lineHeight += 35;
@@ -169,7 +182,7 @@ function PDFInvoice(_ref){
                       doc.switchToPage(i);
                       doc.font('WeSwap-semibold').fontSize(10).text('Page ' + (i + 1) + ' of ' + range.count, CONTENT_LEFT_PADDING, CONTENT_WIDTH, {
                           align: 'right',
-                      }).fillColor('#000000');
+                      }).fillColor(TEXT_COLOUR);
       
                       genHeader();
                       genFooter();
