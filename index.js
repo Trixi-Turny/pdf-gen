@@ -4,11 +4,15 @@ var pdfKit = require('pdfkit');
 var moment = require('moment');
 var numeral = require('numeral');
 var i18n = require('./i18n');
-var self = this;
-var TEXT_SIZE = 10;
-var TABLE_HEADER = 10;
-var CONTENT_LEFT_PADDING = 30;
-var FOOTER = '©2018 WeSwap.com Limited. All Rights Reserved. WeSwap and the WeSwap logo are trade marks of WeSwap.com Limited. The WeSwap Prepaid Mastercard is issued by IDT Financial Services Ltd.  IDT Financial Services Limited is part of the IDT Corporation Group of International Companies headquartered in the US. Its cards are issued pursuant to license by Mastercard International. Mastercard and the Mastercard Brand Mark are registered trademarks of Mastercard International. IDT Financial Services Limited is a regulated bank, licensed by the Financial Services Commission (FSC), Gibraltar, under the Financial Services (Banking) Act 1992. Registered Office: 57-63 Line Wall Road, Gibraltar. Registered No: 95716. Directors: M. Fischer, J. Raanan, D. Spier, T. Streatfeild-James. '
+const TEXT_SIZE = 10;
+const TABLE_HEADER = 10;
+const CONTENT_LEFT_PADDING = 30;
+const CONTENT_WIDTH = 700;
+const FOOTER_WIDTH = 540;
+const TEXT_COLOUR = '#262626';
+const YELLOW_LINE_COLOUR = '#ffb300';
+const GREY_LINE_COLOUR = '#cccccc';
+const FOOTER = '©2018 WeSwap.com Limited. All Rights Reserved. WeSwap and the WeSwap logo are trade marks of WeSwap.com Limited. The WeSwap Prepaid Mastercard is issued by IDT Financial Services Ltd.  IDT Financial Services Limited is part of the IDT Corporation Group of International Companies headquartered in the US. Its cards are issued pursuant to license by Mastercard International. Mastercard and the Mastercard Brand Mark are registered trademarks of Mastercard International. IDT Financial Services Limited is a regulated bank, licensed by the Financial Services Commission (FSC), Gibraltar, under the Financial Services (Banking) Act 1992. Registered Office: 57-63 Line Wall Road, Gibraltar. Registered No: 95716. Directors: M. Fischer, J. Raanan, D. Spier, T. Streatfeild-James. '
   
 function PDFInvoice(_ref){
   var customer = _ref.customer;
@@ -23,8 +27,7 @@ function PDFInvoice(_ref){
           doc.registerFont('WeSwap-semibold', __dirname +'/assets/montserrat-semibold.ttf');
           doc.registerFont('WeSwap-light', __dirname +'/assets/montserrat-light.ttf');
       
-      
-          // doc.fillColor('#333333');
+    
       
       //    moment.locale(PDFGenerator.lang);
       
@@ -32,8 +35,8 @@ function PDFInvoice(_ref){
           var table = {
               x: CONTENT_LEFT_PADDING,
               y: 300,
-              //distance of fields in table from left
-              inc: [0, 70, 300, 390, 450]
+              //distance of fields in table from left after CONTENT_LEFT_PADDING
+              inc: [0, 70, 280, 390, 450]
           };
           function genHeader() {
               console.log('generating header');
@@ -49,28 +52,30 @@ function PDFInvoice(_ref){
               doc.moveTo(40, 245)
                   .lineTo(40, 150)
                   .lineWidth(1.2)
-                  .strokeColor('#ffb300')
+                  .strokeColor(YELLOW_LINE_COLOUR)
                   .stroke();
               //Top -left text with 'Statement and date
       
       
-              doc.font('WeSwap-semibold').fontSize(18).fillColor('#000000').text('Statement', CONTENT_LEFT_PADDING, 30, {
+              doc.font('WeSwap-semibold').fontSize(18).text('Statement', CONTENT_LEFT_PADDING, 30, {
                   align: 'right',
-              }).fillColor('#000000');
-              doc.font('WeSwap-semibold').fontSize(18).fillColor('#000000').text(moment(dateRange.dateFrom, 'YYYY-MM-DD').format('L') + ' - ' + moment(dateRange.dateTo, 'YYYY-MM-DD').format('L'), CONTENT_LEFT_PADDING, 70, {
+              }).fillColor(TEXT_COLOUR);
+              doc.font('WeSwap-semibold').fontSize(18).text(moment(dateRange.dateFrom, 'YYYY-MM-DD').format('L') + ' - ' + moment(dateRange.dateTo, 'YYYY-MM-DD').format('L'), CONTENT_LEFT_PADDING, 70, {
                   align: 'right',
-              }).fillColor('#000000');
+              }).fillColor(TEXT_COLOUR);
       
               //Customer address:
               doc.font('WeSwap-semibold').fontSize(12).text(customer.name + '\n' + customer.address.addressLine1 + '\n' + customer.address.addressLine2 + '\n' + customer.address.addressLine3 + '\n' + customer.address.postCode + '\n' + customer.address.country, CONTENT_LEFT_PADDING + 20, 150, {
                   align: 'left'
-              }).fillColor('#333333');
+              }).fillColor(TEXT_COLOUR);
       
       
           }
       
           function genFooter() {
-              doc.font('WeSwap-light').fontSize(7).text(FOOTER, CONTENT_LEFT_PADDING, 740).fillColor('#000000');
+              doc.font('WeSwap-light').fontSize(6.6).text(FOOTER, CONTENT_LEFT_PADDING, 740, {
+                  width: FOOTER_WIDTH
+              }).fillColor('#262626');
               console.log('footer is done');
           }
       
@@ -92,12 +97,12 @@ function PDFInvoice(_ref){
           //for yellow line under tableheaders:
           function genYellowLine() {
               console.log('Generating Yellow Line');
-              var maxWidth = 700;
+              var maxWidth = CONTENT_WIDTH;
               var verticalPosition = 310;
               doc.moveTo(maxWidth, verticalPosition)
                   .lineTo(0, verticalPosition)
                   .lineWidth(1.2)
-                  .strokeColor('#ffb300')
+                  .strokeColor(YELLOW_LINE_COLOUR)
                   .stroke();
           }
       
@@ -107,7 +112,7 @@ function PDFInvoice(_ref){
               doc.moveTo(divMaxWidth, lineHeight)
                   .lineTo(CONTENT_LEFT_PADDING, lineHeight)
                   .lineWidth(0.1)
-                  .strokeColor('#cccccc')
+                  .strokeColor(GREY_LINE_COLOUR)
                   .stroke();
       
           }
@@ -162,7 +167,7 @@ function PDFInvoice(_ref){
                   var range = doc.bufferedPageRange();
                   for (var i = 0; i < range.count; i++) {
                       doc.switchToPage(i);
-                      doc.font('WeSwap-semibold').fontSize(10).text('Page ' + (i + 1) + ' of ' + range.count, CONTENT_LEFT_PADDING, 700, {
+                      doc.font('WeSwap-semibold').fontSize(10).text('Page ' + (i + 1) + ' of ' + range.count, CONTENT_LEFT_PADDING, CONTENT_WIDTH, {
                           align: 'right',
                       }).fillColor('#000000');
       

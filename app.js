@@ -54,7 +54,7 @@ const document = pdfInvoice({
       {date:'2018-03-02', description: 'Lorem ipsum dollor sit ametLorem ipsum dollor sit amet', local_amount: '+10 GBP' , fx_rate: 34.5876,  amount: '+150000.97 GHS' },
       {date:'2018-03-02', description: 'Lorem ipsum dollor sit ametLorem ipsum dollor sit amet', local_amount: '+10 GBP' , fx_rate: 34.5876,  amount: '+15000 GHS' },
       {date:'2018-03-02', description: 'Lorem ipsum dollor sit ametLorem ipsum dollor sit amet', local_amount: '+10 GBP' , fx_rate: 34.5876,  amount: '+15000 GHS' },
-      {date:'2018-03-02', description: 'Lorem ipsum dollor sit ametLorem ipsum dollor sit ametLorem ipsum dollor sit ametLorem ipsum dollor sit amet', local_amount: '+10 GBP' , fx_rate: 34.5876,  amount: '+15000GHS' },
+      {date:'2018-03-02', description: 'Lorem ipsum dollor sit ametLorem ipsum dollor sit ametLorem ipsum dollor sit ametLorem ipsum dollor sit amet', local_amount: '+1000000.90 GBP' , fx_rate: 34.5876,  amount: '+1500000 GHS' },
     ],
   });
  
