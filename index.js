@@ -39,6 +39,16 @@ function PDFInvoice(_ref){
               //distance of fields in table from left after CONTENT_LEFT_PADDING
               inc: [0, 70, 280, 390, 465]
           };
+
+          //vertical line next to address
+          function generateVerticalLine(lineHeight){
+            doc.moveTo(40, 245)
+            .lineTo(40, lineHeight)
+            .lineWidth(1.2)
+            .strokeColor(YELLOW_LINE_COLOUR)
+            .stroke();
+
+          }
           function genHeader() {
               console.log('generating header');
       
@@ -48,13 +58,9 @@ function PDFInvoice(_ref){
                   align: 'center',
                   valign: 'center'
               });
-      
-              //vertical line next to address: 
-              doc.moveTo(40, 245)
-                  .lineTo(40, 150)
-                  .lineWidth(1.2)
-                  .strokeColor(YELLOW_LINE_COLOUR)
-                  .stroke();
+
+              generateVerticalLine(150);
+
 
               //Top -left text with 'Statement and date
               doc.font('WeSwap-semibold').fontSize(18).fillColor(TEXT_COLOUR).text('Statement', CONTENT_LEFT_PADDING, 30, {
@@ -111,8 +117,9 @@ function PDFInvoice(_ref){
           function genTableLines(lineHeight) {
               doc.moveTo(divMaxWidth, lineHeight)
                   .lineTo(CONTENT_LEFT_PADDING, lineHeight)
-                  .lineWidth(0.1)
+                  .lineWidth(0.01)
                   .strokeColor(GREY_LINE_COLOUR)
+                  .strokeOpacity(0.45)
                   .stroke();
       
           }
