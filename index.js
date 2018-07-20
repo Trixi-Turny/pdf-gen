@@ -79,7 +79,7 @@ function PDFInvoice(_ref){
           }
       
           function genFooter() {
-              doc.font('WeSwap-light').fontSize(6.6).fillColor(FOOTER_COLOUR).text(FOOTER, CONTENT_LEFT_PADDING, 740, {
+              doc.font('WeSwap-light').fontSize(6.6).fillColor(FOOTER_COLOUR).text(FOOTER, CONTENT_LEFT_PADDING, 750, {
                   width: FOOTER_WIDTH
               })
               console.log('footer is done');
@@ -205,7 +205,7 @@ function PDFInvoice(_ref){
                   var range = doc.bufferedPageRange();
                   for (var i = 0; i < range.count; i++) {
                       doc.switchToPage(i);
-                      doc.font('WeSwap-semibold').fontSize(10).text('Page ' + (i + 1) + ' of ' + range.count, CONTENT_LEFT_PADDING, CONTENT_WIDTH, {
+                      doc.font('WeSwap-semibold').fontSize(10).text('Page ' + (i + 1) + ' of ' + range.count, CONTENT_LEFT_PADDING, 720, {
                           align: 'right',
                       }).fillColor(TEXT_COLOUR);
       
