@@ -5,11 +5,12 @@ var moment = require('moment');
 var numeral = require('numeral');
 var i18n = require('./i18n');
 const TEXT_SIZE = 9.5;
-const TABLE_HEADER = 10;
+const TABLE_HEADER = 9.5;
 const CONTENT_LEFT_PADDING = 30;
 const CONTENT_WIDTH = 700;
 const FOOTER_WIDTH = 540;
 const TEXT_COLOUR = '#262626';
+const FOOTER_COLOUR = '#707070';
 const YELLOW_LINE_COLOUR = '#ffb300';
 const GREY_LINE_COLOUR = '#cccccc';
 const FOOTER = '©2018 WeSwap.com Limited. All Rights Reserved. WeSwap and the WeSwap logo are trade marks of WeSwap.com Limited. The WeSwap Prepaid Mastercard is issued by IDT Financial Services Ltd.  IDT Financial Services Limited is part of the IDT Corporation Group of International Companies headquartered in the US. Its cards are issued pursuant to license by Mastercard International. Mastercard and the Mastercard Brand Mark are registered trademarks of Mastercard International. IDT Financial Services Limited is a regulated bank, licensed by the Financial Services Commission (FSC), Gibraltar, under the Financial Services (Banking) Act 1992. Registered Office: 57-63 Line Wall Road, Gibraltar. Registered No: 95716. Directors: M. Fischer, J. Raanan, D. Spier, T. Streatfeild-James. '
@@ -36,7 +37,7 @@ function PDFInvoice(_ref){
               x: CONTENT_LEFT_PADDING,
               y: 300,
               //distance of fields in table from left after CONTENT_LEFT_PADDING
-              inc: [0, 70, 280, 390, 450]
+              inc: [0, 70, 280, 390, 465]
           };
           function genHeader() {
               console.log('generating header');
@@ -56,9 +57,9 @@ function PDFInvoice(_ref){
                   .stroke();
 
               //Top -left text with 'Statement and date
-              doc.font('WeSwap-semibold').fontSize(18).text('Statement', CONTENT_LEFT_PADDING, 30, {
+              doc.font('WeSwap-semibold').fontSize(18).fillColor(TEXT_COLOUR).text('Statement', CONTENT_LEFT_PADDING, 30, {
                   align: 'right',
-              }).fillColor(TEXT_COLOUR);
+              })
               doc.font('WeSwap-semibold').fontSize(18).text(moment(dateRange.dateFrom, 'YYYY-MM-DD').format('L') + ' - ' + moment(dateRange.dateTo, 'YYYY-MM-DD').format('L'), CONTENT_LEFT_PADDING, 70, {
                   align: 'right',
               }).fillColor(TEXT_COLOUR);
@@ -72,9 +73,9 @@ function PDFInvoice(_ref){
           }
       
           function genFooter() {
-              doc.font('WeSwap-light').fontSize(6.6).text(FOOTER, CONTENT_LEFT_PADDING, 740, {
+              doc.font('WeSwap-light').fontSize(6.6).fillColor(FOOTER_COLOUR).text(FOOTER, CONTENT_LEFT_PADDING, 740, {
                   width: FOOTER_WIDTH
-              }).fillColor(TEXT_COLOUR);
+              })
               console.log('footer is done');
           }
       
@@ -83,7 +84,7 @@ function PDFInvoice(_ref){
               var secondRow = ['', '', '(if applicable)', '(if applicable)', ''];
               ['Date', 'Description', 'Local amount', 'FX Rate', 'Amount'].forEach(function (text, i) {
       
-                  doc.font('WeSwap-semibold').fontSize(TABLE_HEADER).text(text.substring(), table.x + table.inc[i], 275);
+                  doc.font('WeSwap-semibold').fontSize(TABLE_HEADER).fillColor(TEXT_COLOUR).text(text.substring(), table.x + table.inc[i], 275);
       
               });
       
@@ -127,62 +128,47 @@ function PDFInvoice(_ref){
                 var twoLineDescription = false;
                 var offset1 = 35;
                 var offset2 = 30;
-                
-               
                 var lineHeightOffset = 32;
-                console.log("length"+item.description+ item.description.length);
+   
                 if (item.description.length > 35) {
                     item.description = item.description.substring(0, 69);
                     twoLineDescription = true;
                     wrap = 210;
                 }
 
-                if(itemIndex == 0 ){
-                    console.log("index was 0");
-                    console.log(itemIndex+ " 2liner "+ twoLineDescription+ " prev2 "+ previousTwoLiner);
-                    offset2 = 20;
-    
-                }else if(twoLineDescription && previousTwoLiner){
+           
+                if(twoLineDescription && previousTwoLiner){
                     console.log(itemIndex+ " 2liner "+ twoLineDescription+ " prev2 "+ previousTwoLiner);
 
                   offset2 = 23;
                   previousTwoLiner = true;
-                //   lineHeightOffset = 40;
+                  lineHeightOffset = 32;
+    
 
                 }else if(twoLineDescription && !previousTwoLiner){
                     console.log(itemIndex+ " 2liner "+ twoLineDescription+ " prev2 "+ previousTwoLiner);
                     previousTwoLiner = true;
                     offset2 = 17;
+                    lineHeightOffset = 32;
 
                    
                 }else if(!twoLineDescription && previousTwoLiner){
                     console.log(itemIndex+ " 2liner "+ twoLineDescription+ " prev2 "+ previousTwoLiner);
                     previousTwoLiner = false;
                     twoLineDescription= false;
-                    offset2 = 23;
-                    // offset1 = 30;
-                }else if(!twoLineDescription && !previousTwoLiner){
+                    offset2 = 26;
+                    lineHeightOffset = 22;
+    
+                }else {
                     console.log(itemIndex+ " 2liner "+ twoLineDescription+ " prev2 "+ previousTwoLiner);
-                    // offset1 = 10;
-                    offset2 = 17;
+    
+                    offset2 = 20;
                     previousTwoLiner = false;
                     twoLineDescription= false;
+                    lineHeightOffset = 24;
 
                 }
-                // else{
-                //     offset2 = 21;
-                //     lineHeightOffset = 25;
-                // }
-                // }else if(itemIndex > 0 && twoLineDescription) {
-                //     offset2 = 30;
-                //     lineHeightOffset = 33;
-                    
-                // }else{
-                //     offset2 = 30;
-                //     lineHeightOffset = 34;
-                // }
-   
-
+        
                   ['date', 'description', 'local_amount', 'fx_rate', 'amount'].forEach(function (field, i) {
       
 
@@ -197,7 +183,7 @@ function PDFInvoice(_ref){
                   });
                 //   console.log(table.y + offset2 + itemIndex * offset1);
                   lineHeight = table.y + offset2 + itemIndex * offset1 + lineHeightOffset;
-                //   genTableLines(lineHeight);
+                  genTableLines(lineHeight);
       
       
               });
