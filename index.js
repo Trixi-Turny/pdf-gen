@@ -4,7 +4,7 @@ var pdfKit = require('pdfkit');
 var moment = require('moment');
 var numeral = require('numeral');
 var i18n = require('./i18n');
-const TEXT_SIZE = 10;
+const TEXT_SIZE = 9.5;
 const TABLE_HEADER = 10;
 const CONTENT_LEFT_PADDING = 30;
 const CONTENT_WIDTH = 700;
@@ -118,36 +118,86 @@ function PDFInvoice(_ref){
       
           function generateTableForPage(chunk) {
               var lineHeight = 310;
-              var offset1 = 35;
-              var offset2 =20;
               var wrap = 600;
-              var twoLineDescription = '';
+             
+              var previousTwoLiner = false;
+
+              
               chunk.forEach(function (item, itemIndex) {
+                var twoLineDescription = false;
+                var offset1 = 35;
+                var offset2 = 30;
+                
+               
+                var lineHeightOffset = 32;
+                console.log("length"+item.description+ item.description.length);
+                if (item.description.length > 35) {
+                    item.description = item.description.substring(0, 69);
+                    twoLineDescription = true;
+                    wrap = 210;
+                }
+
+                if(itemIndex == 0 ){
+                    console.log("index was 0");
+                    console.log(itemIndex+ " 2liner "+ twoLineDescription+ " prev2 "+ previousTwoLiner);
+                    offset2 = 20;
+    
+                }else if(twoLineDescription && previousTwoLiner){
+                    console.log(itemIndex+ " 2liner "+ twoLineDescription+ " prev2 "+ previousTwoLiner);
+
+                  offset2 = 23;
+                  previousTwoLiner = true;
+                //   lineHeightOffset = 40;
+
+                }else if(twoLineDescription && !previousTwoLiner){
+                    console.log(itemIndex+ " 2liner "+ twoLineDescription+ " prev2 "+ previousTwoLiner);
+                    previousTwoLiner = true;
+                    offset2 = 17;
+
+                   
+                }else if(!twoLineDescription && previousTwoLiner){
+                    console.log(itemIndex+ " 2liner "+ twoLineDescription+ " prev2 "+ previousTwoLiner);
+                    previousTwoLiner = false;
+                    twoLineDescription= false;
+                    offset2 = 23;
+                    // offset1 = 30;
+                }else if(!twoLineDescription && !previousTwoLiner){
+                    console.log(itemIndex+ " 2liner "+ twoLineDescription+ " prev2 "+ previousTwoLiner);
+                    // offset1 = 10;
+                    offset2 = 17;
+                    previousTwoLiner = false;
+                    twoLineDescription= false;
+
+                }
+                // else{
+                //     offset2 = 21;
+                //     lineHeightOffset = 25;
+                // }
+                // }else if(itemIndex > 0 && twoLineDescription) {
+                //     offset2 = 30;
+                //     lineHeightOffset = 33;
+                    
+                // }else{
+                //     offset2 = 30;
+                //     lineHeightOffset = 34;
+                // }
+   
+
                   ['date', 'description', 'local_amount', 'fx_rate', 'amount'].forEach(function (field, i) {
       
-                      //description to go on 2 lines at 
-                      if (item.description && item.description.length > 35) {
-                          item.description = item.description.substring(0, 69);
-                          wrap = 210;
-                          
-        
-                        //   lineHeight+=4
-                        //   offset2+=20;
 
-                      }
-                    //   else{
-                      console.log(itemIndex+ " index");
+                
                       doc.font('WeSwap-light').fontSize(TEXT_SIZE).text(item[field], table.x + table.inc[i], table.y + offset2 + itemIndex * offset1, {
                         width: wrap,
-                        lineBreak: -5
-                        
-
                       });
-                    // }
+                    //   console.log(table.x + table.inc[i], table.y + offset2 + itemIndex * offset1);
+                      console.log(table.x + table.inc[i], table.y + offset2 + itemIndex * offset1+ lineHeightOffset);
+    
       
                   });
-                  lineHeight += 35;
-                  genTableLines(lineHeight);
+                //   console.log(table.y + offset2 + itemIndex * offset1);
+                  lineHeight = table.y + offset2 + itemIndex * offset1 + lineHeightOffset;
+                //   genTableLines(lineHeight);
       
       
               });
