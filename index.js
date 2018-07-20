@@ -134,7 +134,7 @@ function PDFInvoice(_ref){
               chunk.forEach(function (item, itemIndex) {
                 var twoLineDescription = false;
                 var offset1 = 35;
-                var offset2 = 30;
+                var offset2 = 20;
                 var lineHeightOffset = 32;
    
                 if (item.description.length > 35) {
@@ -143,22 +143,18 @@ function PDFInvoice(_ref){
                     wrap = 210;
                 }
 
-           
                 if(twoLineDescription && previousTwoLiner){
                     console.log(itemIndex+ " 2liner "+ twoLineDescription+ " prev2 "+ previousTwoLiner);
-
                   offset2 = 23;
                   previousTwoLiner = true;
-                  lineHeightOffset = 32;
+                  lineHeightOffset = 31;
     
-
                 }else if(twoLineDescription && !previousTwoLiner){
                     console.log(itemIndex+ " 2liner "+ twoLineDescription+ " prev2 "+ previousTwoLiner);
                     previousTwoLiner = true;
                     offset2 = 17;
                     lineHeightOffset = 32;
-
-                   
+  
                 }else if(!twoLineDescription && previousTwoLiner){
                     console.log(itemIndex+ " 2liner "+ twoLineDescription+ " prev2 "+ previousTwoLiner);
                     previousTwoLiner = false;
@@ -167,7 +163,6 @@ function PDFInvoice(_ref){
                     lineHeightOffset = 22;
     
                 }else {
-                    console.log(itemIndex+ " 2liner "+ twoLineDescription+ " prev2 "+ previousTwoLiner);
     
                     offset2 = 20;
                     previousTwoLiner = false;
@@ -183,12 +178,9 @@ function PDFInvoice(_ref){
                       doc.font('WeSwap-light').fontSize(TEXT_SIZE).text(item[field], table.x + table.inc[i], table.y + offset2 + itemIndex * offset1, {
                         width: wrap,
                       });
-                    //   console.log(table.x + table.inc[i], table.y + offset2 + itemIndex * offset1);
-                      console.log(table.x + table.inc[i], table.y + offset2 + itemIndex * offset1+ lineHeightOffset);
     
-      
                   });
-                //   console.log(table.y + offset2 + itemIndex * offset1);
+    
                   lineHeight = table.y + offset2 + itemIndex * offset1 + lineHeightOffset;
                   genTableLines(lineHeight);
       
