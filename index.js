@@ -126,15 +126,13 @@ function PDFInvoice(_ref){
       
           function generateTableForPage(chunk) {
               var lineHeight = 310;
-              var wrap = 600;
-             
+              var wrap = 600;             
               var previousTwoLiner = false;
 
-              
               chunk.forEach(function (item, itemIndex) {
                 var twoLineDescription = false;
                 var offset1 = 35;
-                var offset2 = 20;
+                var offset2 = 23;
                 var lineHeightOffset = 32;
    
                 if (item.description.length > 35) {
@@ -158,16 +156,16 @@ function PDFInvoice(_ref){
                 }else if(!twoLineDescription && previousTwoLiner){
                     console.log(itemIndex+ " 2liner "+ twoLineDescription+ " prev2 "+ previousTwoLiner);
                     previousTwoLiner = false;
-                    twoLineDescription= false;
-                    offset2 = 26;
+                    // twoLineDescription= false;
+                    offset2 = 23;
                     lineHeightOffset = 22;
     
-                }else {
-    
-                    offset2 = 20;
+                }else{
+                    console.log(itemIndex+ " 2liner "+ twoLineDescription+ " prev2 "+ previousTwoLiner);
+                    offset2 = 23;
                     previousTwoLiner = false;
-                    twoLineDescription= false;
-                    lineHeightOffset = 24;
+                    // twoLineDescription= false;
+                    lineHeightOffset = 22;
 
                 }
         
