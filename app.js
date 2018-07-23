@@ -14,10 +14,10 @@ const document = pdfInvoice({
     customer: {
       name: 'Elliot Raque',
       address:{
-        addressLine1: '1 Street rd',
+        addressLine1: '1 Street Rd',
         addressLine2: 'Westminster',
-        addressLine3: 'Town',
-        postCode: 'SY45 7UJ',
+        addressLine3: 'London',
+        postCode: 'PO57 7UH',
         country: 'UK'
       }
     },

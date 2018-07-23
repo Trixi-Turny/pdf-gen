@@ -5,6 +5,7 @@ var moment = require('moment');
 var numeral = require('numeral');
 var i18n = require('./i18n');
 const TEXT_SIZE = 9.5;
+const HEADER_TEXT_SIZE = 18;
 const TABLE_HEADER = 9.5;
 const CONTENT_LEFT_PADDING = 30;
 const CONTENT_WIDTH = 700;
@@ -21,16 +22,16 @@ function PDFInvoice(_ref){
     var dateRange = _ref.dateRange;
 
     // Set the logo
-    var logo = __dirname+ "/assets/Png_logo_Large.png";
+    var logo = __dirname+ '/assets/Png_logo_Large.png';
 
     //bufferPages for adding page numbers and ability to generate header and footer on the fly
-    var doc = new PdfKit({ size: "A4", margin: 50, bufferPages: true });
-    doc.registerFont("WeSwap-semibold", __dirname +"/assets/montserrat-semibold.ttf");
-    doc.registerFont("WeSwap-light", __dirname +"/assets/montserrat-light.ttf");
+    var doc = new PdfKit({ size: 'A4', margin: 50, bufferPages: true });
+    doc.registerFont('WeSwap-semibold', __dirname +'/assets/montserrat-semibold.ttf');
+    doc.registerFont('WeSwap-light', __dirname +'/assets/montserrat-light.ttf');
 
 
 
-//    moment.locale(PDFGenerator.lang);
+    //    moment.locale(PDFGenerator.lang);
 
     var divMaxWidth = 570;
     var table = {
@@ -41,58 +42,70 @@ function PDFInvoice(_ref){
     };
 
     //vertical line next to address
-    function generateVerticalLine(lineHeight){
-    doc.moveTo(40, 245)
-    .lineTo(40, lineHeight)
-    .lineWidth(1.2)
-    .strokeColor(YELLOW_LINE_COLOUR)
-    .stroke();
+    function generateVerticalLine(lineBreaks){
+        var textHeight = 16.5;
+        var offset = (lineBreaks + 1) * textHeight;
+        var lineHeight = 146
+        doc.moveTo(40, lineHeight)
+            .lineTo(40, lineHeight+offset)
+            .lineWidth(1.2)
+            .strokeColor(YELLOW_LINE_COLOUR)
+            .stroke();
 
     }
     function genHeader() {
         //Logo
         doc.image(logo, CONTENT_LEFT_PADDING, 20, {
             fit: [156.75, 31.75],
-            align: "center",
-            valign: "center"
+            align: 'center',
+            valign: 'center'
         });
 
-        generateVerticalLine(150);
-
-
-        //Top -left text with "Statement and date
-        doc.font("WeSwap-semibold").fontSize(18).fillColor(TEXT_COLOUR).text("Statement", CONTENT_LEFT_PADDING, 30, {
-            align: "right",
+        //Top -left text with 'Statement and date
+        doc.font('WeSwap-semibold').fontSize(HEADER_TEXT_SIZE).fillColor(TEXT_COLOUR).text('Statement', CONTENT_LEFT_PADDING, 30, {
+            align: 'right',
         });
-        doc.font("WeSwap-semibold").fontSize(18).text(moment(dateRange.dateFrom, "YYYY-MM-DD").format("L") + " - " + moment(dateRange.dateTo, "YYYY-MM-DD").format("L"), CONTENT_LEFT_PADDING, 70, {
-            align: "right",
+        doc.font('WeSwap-semibold').fontSize(HEADER_TEXT_SIZE).text(moment(dateRange.dateFrom, 'YYYY-MM-DD').format('L') + ' - ' + moment(dateRange.dateTo, 'YYYY-MM-DD').format('L'), CONTENT_LEFT_PADDING, 70, {
+            align: 'right',
         }).fillColor(TEXT_COLOUR);
 
+        var address1 = customer.address.addressLine1 ? '\n' + customer.address.addressLine1 : '';
+        var address2 = customer.address.addressLine2 ? '\n' + customer.address.addressLine2 : '';
+        var address3 = customer.address.addressLine3 ? '\n' + customer.address.addressLine3 : '';
+        var postCode = customer.address.postCode ? '\n' + customer.address.postCode : '';
+        var country = customer.address.country ? '\n' + customer.address.country : '';
+
+        var addressString = customer.name + address1 + address2 + address3 + postCode + country;  
+        var lineBreaks = addressString.match(new RegExp('\n', 'g') || []).length;
+        
+        generateVerticalLine(lineBreaks);
+
+
         //Customer address:
-        doc.font("WeSwap-semibold").fontSize(12).text(customer.name + "\n" + customer.address.addressLine1 + "\n" + customer.address.addressLine2 + "\n" + customer.address.addressLine3 + "\n" + customer.address.postCode + "\n" + customer.address.country, CONTENT_LEFT_PADDING + 20, 150, {
-            align: "left"
+        doc.font('WeSwap-semibold').fontSize(12).text(addressString, CONTENT_LEFT_PADDING + 20, 150, {
+            align: 'left'
         }).fillColor(TEXT_COLOUR);
 
 
     }
 
     function genFooter() {
-        doc.font("WeSwap-light").fontSize(6.6).fillColor(FOOTER_COLOUR).text(FOOTER, CONTENT_LEFT_PADDING, 750, {
+        doc.font('WeSwap-light').fontSize(6.6).fillColor(FOOTER_COLOUR).text(FOOTER, CONTENT_LEFT_PADDING, 750, {
             width: FOOTER_WIDTH
         });
     }
 
     function genTableHeaders() {
-        var secondRow = ["", "", "(if applicable)", "(if applicable)", ""];
-        ["Date", "Description", "Local amount", "FX Rate", "Amount"].forEach(function (text, i) {
+        var secondRow = ['', '', '(if applicable)', '(if applicable)', ''];
+        ['Date', 'Description', 'Local amount', 'FX Rate', 'Amount'].forEach(function (text, i) {
 
-            doc.font("WeSwap-semibold").fontSize(TABLE_HEADER).fillColor(TEXT_COLOUR).text(text.substring(), table.x + table.inc[i], 275);
+            doc.font('WeSwap-semibold').fontSize(TABLE_HEADER).fillColor(TEXT_COLOUR).text(text.substring(), table.x + table.inc[i], 275);
 
         });
 
-        //for "if applicable" bit
+        //for 'if applicable' bit
         secondRow.forEach(function (str, i) {
-            doc.font("WeSwap-light").fontSize(7).text(str, table.x + table.inc[i], 290);
+            doc.font('WeSwap-light').fontSize(7).text(str, table.x + table.inc[i], 290);
         });
     }
 
@@ -119,49 +132,67 @@ function PDFInvoice(_ref){
 
     }
 
+    //group page content per n items for aesthetics
+    function generateTableContentForPage(){
+        var group = [];
+
+        //the number of rows to fit in a page comfortably
+        var n = 10;
+        for (var i = 0, j = 0; i < items.length; i++) {
+            if (i >= n && i % n === 0) {
+                j++;
+                doc.addPage();
+            }
+            group[j] = group[j] || [];
+            group[j].push(items[i]);
+
+        }
+        return group;
+    }
+
     function generateTableForPage(chunk) {
         var lineHeight = 310;
         var wrap = 600;             
         var previousTwoLiner = false;
 
         chunk.forEach(function (item, itemIndex) {
-        var twoLineDescription = false;
-        var offset1 = 37;
-        var offset2 = 23;
-        var lineHeightOffset = 32;
+            var twoLineDescription = false;
+            var offset1 = 37;
+            var offset2 = 23;
+            var lineHeightOffset = 32;
+    
+            if (item.description.length > 35) {
+                item.description = item.description.substring(0, 69);
+                twoLineDescription = true;
+                wrap = 210;
+            }
+    
+            if(twoLineDescription && previousTwoLiner){
+                offset2 = 23;
+                previousTwoLiner = true;
+                lineHeightOffset = 31;
+    
+            }else if(twoLineDescription && !previousTwoLiner){
+                previousTwoLiner = true;
+                offset2 = 17;
+                lineHeightOffset = 32;
+    
+            }else if(!twoLineDescription && previousTwoLiner){
+                previousTwoLiner = false;
+                offset2 = 23;
+                lineHeightOffset = 22;
+    
+            }else{
+                offset2 = 23;
+                previousTwoLiner = false;
+                lineHeightOffset = 24;
+    
+            }
 
-        if (item.description.length > 35) {
-            item.description = item.description.substring(0, 69);
-            twoLineDescription = true;
-            wrap = 210;
-        }
+            ['date', 'description', 'local_amount', 'fx_rate', 'amount'].forEach(function (field, i) {
 
-        if(twoLineDescription && previousTwoLiner){
-            offset2 = 23;
-            previousTwoLiner = true;
-            lineHeightOffset = 31;
-
-        }else if(twoLineDescription && !previousTwoLiner){
-            previousTwoLiner = true;
-            offset2 = 17;
-            lineHeightOffset = 32;
-
-        }else if(!twoLineDescription && previousTwoLiner){
-            previousTwoLiner = false;
-            offset2 = 23;
-            lineHeightOffset = 22;
-
-        }else{
-            offset2 = 23;
-            previousTwoLiner = false;
-            lineHeightOffset = 24;
-
-        }
-
-            ["date", "description", "local_amount", "fx_rate", "amount"].forEach(function (field, i) {
-
-                doc.font("WeSwap-light").fontSize(TEXT_SIZE).text(item[field], table.x + table.inc[i], table.y + offset2 + itemIndex * offset1, {
-                width: wrap,
+                doc.font('WeSwap-light').fontSize(TEXT_SIZE).text(item[field], table.x + table.inc[i], table.y + offset2 + itemIndex * offset1, {
+                    width: wrap,
                 });
 
             });
@@ -175,37 +206,20 @@ function PDFInvoice(_ref){
     }
     return {    
         genContentForEachPage: function genContentForEachPage() {
-
-            //group items per n rows
-            var group = [];
-
-            //the number of rows to fit in a page comfortably
-            var n = 10;
-            for (var i = 0, j = 0; i < items.length; i++) {
-                if (i >= n && i % n === 0) {
-                    j++;
-                    doc.addPage();
-                }
-                group[j] = group[j] || [];
-                group[j].push(items[i]);
-
-            }
-
+            var tableContent = generateTableContentForPage();
             var range = doc.bufferedPageRange();
-            for (var i = 0; i < range.count; i++) {
-                doc.switchToPage(i);
-                doc.font("WeSwap-semibold").fontSize(10).text("Page " + (i + 1) + " of " + range.count, CONTENT_LEFT_PADDING, 720, {
-                    align: "right",
-                }).fillColor(TEXT_COLOUR);
-
+            for (var k = 0; k < range.count; k++) {
+                doc.switchToPage(k);
+                doc.font('WeSwap-semibold').fontSize(10).text('Page ' + (k + 1) + ' of ' + range.count, CONTENT_LEFT_PADDING, 720, {
+                    align: 'right',
+                }).fillColor(TEXT_COLOUR); 
                 genHeader();
                 genFooter();
                 genTableHeaders();
                 genYellowLine();
-                generateTableForPage(group[i]);
+                generateTableForPage(tableContent[k]);
 
             }
-    
         },
         generate: function generate() {
             this.genContentForEachPage();
@@ -215,8 +229,9 @@ function PDFInvoice(_ref){
         get pdfkitDoc() {
             return doc;
         }
-    };
-} 
+    };   
+}
+
 PDFInvoice.lang = 'pt_BR';
 
 module.exports = PDFInvoice;
