@@ -15,7 +15,9 @@ const FOOTER_COLOUR = '#707070';
 const YELLOW_LINE_COLOUR = '#ffb300';
 const GREY_LINE_COLOUR = '#cccccc';
 const FOOTER = '©2018 WeSwap.com Limited. All Rights Reserved. WeSwap and the WeSwap logo are trade marks of WeSwap.com Limited. The WeSwap Prepaid Mastercard is issued by IDT Financial Services Ltd.  IDT Financial Services Limited is part of the IDT Corporation Group of International Companies headquartered in the US. Its cards are issued pursuant to license by Mastercard International. Mastercard and the Mastercard Brand Mark are registered trademarks of Mastercard International. IDT Financial Services Limited is a regulated bank, licensed by the Financial Services Commission (FSC), Gibraltar, under the Financial Services (Banking) Act 1992. Registered Office: 57-63 Line Wall Road, Gibraltar. Registered No: 95716. Directors: M. Fischer, J. Raanan, D. Spier, T. Streatfeild-James. '
-  
+const pleaseNote = 'Please note:';
+const pleaseNoteNotice = pleaseNote + '  If you have received a refund during this month, the transaction may not appear here, please refer to your activity tab and use the export functionality to download all activities for this period or contact our Customer Service team at support@weswap.com';
+
 function PDFInvoice(_ref){
     var customer = _ref.customer;
     var items = _ref.items;
@@ -89,6 +91,16 @@ function PDFInvoice(_ref){
 
     }
 
+    function generateNotice(){
+        
+        doc.font('WeSwap-semibold')
+        .text(pleaseNoteNotice.slice(0, pleaseNote.length), CONTENT_LEFT_PADDING, 700,{
+        width: FOOTER_WIDTH,
+        continued: true})
+        .font('WeSwap-light')
+        .text(pleaseNoteNotice.slice(pleaseNote.length));
+
+    }
     function genFooter() {
         doc.font('WeSwap-light').fontSize(6.6).fillColor(FOOTER_COLOUR).text(FOOTER, CONTENT_LEFT_PADDING, 750, {
             width: FOOTER_WIDTH
@@ -137,7 +149,7 @@ function PDFInvoice(_ref){
         var group = [];
 
         //the number of rows to fit in a page comfortably
-        var n = 10;
+        var n = 9;
         for (var i = 0, j = 0; i < items.length; i++) {
             if (i >= n && i % n === 0) {
                 j++;
@@ -208,9 +220,15 @@ function PDFInvoice(_ref){
         genContentForEachPage: function genContentForEachPage() {
             var tableContent = generateTableContentForPage();
             var range = doc.bufferedPageRange();
+            var pageNoHeight = 720;
             for (var k = 0; k < range.count; k++) {
                 doc.switchToPage(k);
-                doc.font('WeSwap-semibold').fontSize(10).text('Page ' + (k + 1) + ' of ' + range.count, CONTENT_LEFT_PADDING, 720, {
+                if(k==range.count -1){
+                    generateNotice();
+                    pageNoHeight = 670;
+                }
+
+                doc.font('WeSwap-semibold').fontSize(10).text('Page ' + (k + 1) + ' of ' + range.count, CONTENT_LEFT_PADDING, pageNoHeight, {
                     align: 'right',
                 }).fillColor(TEXT_COLOUR); 
                 genHeader();
@@ -218,8 +236,9 @@ function PDFInvoice(_ref){
                 genTableHeaders();
                 genYellowLine();
                 generateTableForPage(tableContent[k]);
-
+               
             }
+            
         },
         generate: function generate() {
             this.genContentForEachPage();
