@@ -93,11 +93,11 @@ function PDFInvoice(_ref){
 
     function generateNotice(){
         
-        doc.font('WeSwap-semibold').fontSize(8).fillColor(TEXT_COLOUR)
+        doc.font('WeSwap-semibold').fontSize(TEXT_SIZE).fillColor(TEXT_COLOUR)
         .text(pleaseNoteNotice.slice(0, pleaseNote.length), CONTENT_LEFT_PADDING, 700,{
         width: FOOTER_WIDTH,
         continued: true})
-        .font('WeSwap-light').fontSize(8).fillColor(TEXT_COLOUR)
+        .font('WeSwap-light').fontSize(TEXT_SIZE).fillColor(TEXT_COLOUR)
         .text(pleaseNoteNotice.slice(pleaseNote.length));
 
     }
