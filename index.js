@@ -65,7 +65,7 @@ function PDFInvoice(_ref){
         doc.font('WeSwap-semibold').fontSize(HEADER_TEXT_SIZE).fillColor(TEXT_COLOUR).text('Statement', CONTENT_LEFT_PADDING, 30, {
             align: 'right',
         });
-        doc.font('WeSwap-semibold').fontSize(HEADER_TEXT_SIZE).text(moment(dateRange.dateFrom, 'YYYY-MM-DD').format('L') + ' - ' + moment(dateRange.dateTo, 'YYYY-MM-DD').format('L'), CONTENT_LEFT_PADDING, 70, {
+        doc.font('WeSwap-semibold').fontSize(HEADER_TEXT_SIZE).text(moment(dateRange.dateFrom, 'YYYY-MM-DD').format('DD/MM/YYYY') + ' - ' + moment(dateRange.dateTo, 'YYYY-MM-DD').format('DD/MM/YYYY'), CONTENT_LEFT_PADDING, 70, {
             align: 'right',
         }).fillColor(TEXT_COLOUR);
 
@@ -77,7 +77,7 @@ function PDFInvoice(_ref){
 
         var addressString = customer.name + address1 + address2 + address3 + postCode + country;  
         var lineBreaks = addressString.match(new RegExp('\n', 'g') || []).length;
-        
+
         generateVerticalLine(lineBreaks);
 
 
