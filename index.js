@@ -172,11 +172,17 @@ function PDFInvoice(_ref){
             var offset1 = 37;
             var offset2 = 23;
             var lineHeightOffset = 32;
+            var safeLineBreak = 30;
+            var maxLength = safeLineBreak * 2 ;
     
-            if (item.description.length > 35) {
-                item.description = item.description.substring(0, 69);
+            console.log(item.description.length + ' '+ item.description);
+            if (item.description.length > safeLineBreak) {
+                item.description = item.description.substring(0, maxLength);
+
+                //force add a space at char 'safeLengthBreak' to make sure lines wrap safely
+                //needed when description comes through without spaces
+                item.description = [item.description.slice(0, safeLineBreak), '\n', item.description.slice(safeLineBreak)].join('');
                 twoLineDescription = true;
-                wrap = 210;
             }
     
             if(twoLineDescription && previousTwoLiner){
